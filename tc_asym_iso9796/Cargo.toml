@@ -1,11 +1,19 @@
 [package]
 name = "tc_asym_iso9796"
-description = "ISO/IEC 9796 digital signatures with message recovery, after Bouncy Castle's ISO9796d1Encoding and Iso9796d2Signer."
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
+description = "ISO/IEC 9796-1 digital signatures with message recovery over RSA, after Bouncy Castle's ISO9796d1Encoding."
+readme = "README.md"
+documentation = "https://docs.rs/tc_asym_iso9796"
+keywords = ["iso9796", "rsa", "signature", "cryptography", "no-std"]
+categories = ["cryptography", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [features]
 rustcrypto = ["tc_rsa/rustcrypto"]

@@ -5,6 +5,15 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
+description = "RSA after Bouncy Castle: key pair generation, blinding and the RSA operation as an asymmetric block cipher, over fixed-width, padded and RustCrypto engines."
+readme = "README.md"
+documentation = "https://docs.rs/tc_rsa"
+keywords = ["rsa", "public-key", "blinding", "cryptography", "no-std"]
+categories = ["cryptography", "no-std"]
+include = ["src/**", "tests/**", "benches/**", "README.md", "BENCHES.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[package.metadata.docs.rs]
+all-features = true
 
 [features]
 default = ["alloc"]
