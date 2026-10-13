@@ -681,7 +681,7 @@ dependencies = [
  "tc_asym_cipher",
  "tc_bigint",
  "tc_digest",
- "tc_rsa_v2",
+ "tc_rsa",
  "tc_sha",
  "tc_zeroize",
 ]
@@ -694,7 +694,7 @@ dependencies = [
  "rand_core",
  "tc_asym_cipher",
  "tc_bigint",
- "tc_rsa_v2",
+ "tc_rsa",
 ]
 
 [[package]]
@@ -746,7 +746,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "tc_rsa_v2"
+name = "tc_rsa"
 version = "0.1.0"
 dependencies = [
  "criterion",

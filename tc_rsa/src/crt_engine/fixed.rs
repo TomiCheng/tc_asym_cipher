@@ -68,7 +68,7 @@ impl<const N: usize, const H: usize> Drop for CrtKey<N, H> {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa_v2::{
+/// use tc_rsa::{
 ///     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator,
 /// };
 ///
@@ -99,7 +99,7 @@ impl<const N: usize, const H: usize> Drop for CrtKey<N, H> {
 /// decrypt.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[256 - message.len()..];
 /// # }
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct FixedRsaCrtCoreEngine<const N: usize, const H: usize> {
     key: Option<CrtKey<N, H>>,

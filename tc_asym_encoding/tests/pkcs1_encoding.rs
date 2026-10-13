@@ -9,7 +9,7 @@ use rand::rngs::StdRng;
 use rand_core::{CryptoRng, Rng, TryCryptoRng, TryRng};
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection};
 use tc_asym_encoding::{EncodingError, Pkcs1Encoding};
-use tc_rsa_v2::RsaError;
+use tc_rsa::RsaError;
 
 type Error = EncodingError<RsaError>;
 

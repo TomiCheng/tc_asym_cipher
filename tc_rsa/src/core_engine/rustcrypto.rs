@@ -33,7 +33,7 @@ struct Key {
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa_v2::{
+/// use tc_rsa::{
 ///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned,
 ///     RsaKeyPairGeneratorRustCrypto,
 /// };
@@ -58,7 +58,7 @@ struct Key {
 /// let mut plaintext = [0; 256];
 /// decrypt.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[256 - message.len()..];
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaCoreEngineRustCrypto {
     key: Option<Key>,

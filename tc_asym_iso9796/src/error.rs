@@ -2,7 +2,7 @@
 
 use core::fmt;
 
-use tc_rsa_v2::RsaError;
+use tc_rsa::RsaError;
 
 /// What can go wrong in ISO 9796.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

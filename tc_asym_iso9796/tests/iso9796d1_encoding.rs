@@ -11,7 +11,7 @@ use tc_asym_cipher::{
 };
 use tc_asym_iso9796::{Iso9796Error, Iso9796d1Encoding};
 use tc_bigint::PaddedBigUint;
-use tc_rsa_v2::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+use tc_rsa::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
 
 type Encoding = Iso9796d1Encoding<StdRng>;
 type Error = Iso9796Error;

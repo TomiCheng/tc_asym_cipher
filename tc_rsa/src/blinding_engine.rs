@@ -50,7 +50,7 @@ impl Drop for Key {
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa_v2::{
+/// use tc_rsa::{
 ///     RsaBlindingEngine, RsaBlindingFactorGenerator, RsaBlindingParams, RsaEngine,
 ///     RsaKeyGenerationParamsOwned, RsaKeyGenerator,
 /// };
@@ -80,7 +80,7 @@ impl Drop for Key {
 /// blinding.init(CipherDirection::Decrypt, &params)?;
 /// let mut signature = [0; 256];
 /// blinding.process_block(&blind_signature, &mut signature)?;
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaBlindingEngine {
     key: Option<Key>,

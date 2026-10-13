@@ -24,7 +24,7 @@ const MAX_STRENGTH: u32 = RsaPublicKey::MAX_SIZE as u32;
 ///
 /// ```
 /// use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
-/// use tc_rsa_v2::{RsaKeyGenerationParamsOwned, RsaKeyPairGeneratorRustCrypto};
+/// use tc_rsa::{RsaKeyGenerationParamsOwned, RsaKeyPairGeneratorRustCrypto};
 ///
 /// // The defaults: a 2048-bit modulus and the public exponent 65537, drawn
 /// // from the system's random source; `with_strength` and the other
@@ -36,7 +36,7 @@ const MAX_STRENGTH: u32 = RsaPublicKey::MAX_SIZE as u32;
 /// // The keys of `rsa`, wrapped as the keys of this crate: the public key
 /// // holds `n` and `e`, the private one adds `d` and the values of the CRT.
 /// let (public, private) = generator.generate_key_pair()?;
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaKeyPairGeneratorRustCrypto<'a> {
     params: Option<Box<dyn RsaKeyGenerationParams + 'a>>,

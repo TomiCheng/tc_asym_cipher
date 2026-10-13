@@ -65,7 +65,7 @@ impl TryCryptoRng for NoRng {}
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa_v2::{
+/// use tc_rsa::{
 ///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned,
 ///     RsaKeyPairGeneratorRustCrypto,
 /// };
@@ -89,7 +89,7 @@ impl TryCryptoRng for NoRng {}
 /// verify.init(CipherDirection::Decrypt, &public)?;
 /// let mut recovered = [0; 256];
 /// verify.process_block(&signature, &mut recovered)?;
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaCrtCoreEngineRustCrypto {
     key: Option<CrtKey>,

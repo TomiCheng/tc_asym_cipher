@@ -63,7 +63,7 @@ impl Drop for CrtKey {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::PaddedBigUint;
-/// use tc_rsa_v2::{
+/// use tc_rsa::{
 ///     PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaKeyGenerationParamsOwned,
 ///     RsaKeyPairGenerator,
 /// };
@@ -90,7 +90,7 @@ impl Drop for CrtKey {
 /// let mut plaintext = vec![0; decrypt.output_block_size()];
 /// decrypt.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[plaintext.len() - message.len()..];
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct PaddedRsaCrtCoreEngine {
     key: Option<CrtKey>,

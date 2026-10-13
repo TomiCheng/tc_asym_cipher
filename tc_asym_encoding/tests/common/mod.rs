@@ -5,7 +5,7 @@
 
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection};
 use tc_bigint::{ArrayEncoding, FixedBigUint, Word};
-use tc_rsa_v2::{FixedRsaCoreEngine, RsaKeyOwned};
+use tc_rsa::{FixedRsaCoreEngine, RsaKeyOwned};
 
 pub const LIMBS: usize = 1024 / Word::BITS as usize;
 pub type U1024 = FixedBigUint<LIMBS>;

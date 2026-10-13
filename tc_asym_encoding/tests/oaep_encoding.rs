@@ -11,7 +11,7 @@ use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDir
 use tc_asym_encoding::{EncodingError, OaepEncoding};
 use tc_bigint::{ArrayEncoding, FixedBigUint, Word};
 use tc_digest::{Digest, TryDigest};
-use tc_rsa_v2::{FixedRsaCoreEngine, RsaError, RsaKeyOwned};
+use tc_rsa::{FixedRsaCoreEngine, RsaError, RsaKeyOwned};
 use tc_sha::{Sha1Digest, Sha256Digest};
 
 const LIMBS: usize = 2048 / Word::BITS as usize;

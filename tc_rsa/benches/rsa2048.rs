@@ -2,7 +2,7 @@
 //! generators. Windows of at least 15 seconds keep the noise down:
 //!
 //! ```text
-//! cargo bench -p tc_rsa_v2 --features rustcrypto --bench rsa2048 -- --warm-up-time 3 --measurement-time 15
+//! cargo bench -p tc_rsa --features rustcrypto --bench rsa2048 -- --warm-up-time 3 --measurement-time 15
 //! ```
 
 #[path = "../tests/common/mod.rs"]
@@ -21,7 +21,7 @@ use tc_asym_cipher::{
     KeyPairGeneratorInit,
 };
 use tc_bigint::{ArrayEncoding, FixedBigUint, PaddedBigUint, Word};
-use tc_rsa_v2::{
+use tc_rsa::{
     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine,
     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaError, RsaKeyGenerationParamsOwned,
     RsaKeyOwned, RsaKeyPairGenerator, RsaKeyPairGeneratorRustCrypto, RsaKeyRustCrypto,

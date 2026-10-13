@@ -5,7 +5,7 @@
 
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection};
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
-use tc_rsa_v2::{RsaEngine, RsaKey, RsaKeyOwned};
+use tc_rsa::{RsaEngine, RsaKey, RsaKeyOwned};
 
 /// The 1024-bit key of Bouncy Castle's `RsaTest`; the public exponent is 17.
 pub const MODULUS: &str = concat!(

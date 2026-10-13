@@ -13,7 +13,7 @@ use tc_asym_cipher::{
     KeyPairGeneratorInit,
 };
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
-use tc_rsa_v2::{
+use tc_rsa::{
     PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaCoreEngineRustCrypto,
     RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned, RsaKeyOwned, RsaKeyPairGenerator,
     RsaKeyPairGeneratorRustCrypto, RsaKeyParams, RsaKeyRustCrypto, RsaPrivateCrtKeyOwned,
@@ -27,7 +27,7 @@ fn params(seed: u64) -> RsaKeyGenerationParamsOwned {
 }
 
 fn run(
-    engine: &mut impl AsymmetricBlockCipher<Error = tc_rsa_v2::RsaError>,
+    engine: &mut impl AsymmetricBlockCipher<Error = tc_rsa::RsaError>,
     input: &[u8],
 ) -> [u8; 128] {
     let mut output = [0; 128];

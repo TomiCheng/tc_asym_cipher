@@ -9,7 +9,7 @@ use rand::SeedableRng;
 use rand::rngs::StdRng;
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection};
 use tc_bigint::{ArrayEncoding, FixedBigUint, Word};
-use tc_rsa_v2::{
+use tc_rsa::{
     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, RsaBlindedEngine, RsaError, RsaKeyRef,
     RsaPrivateCrtKeyRef,
 };
@@ -47,11 +47,11 @@ fn public_engines() -> Vec<(&'static str, Engine)> {
     {
         use tc_bigint::PaddedBigUint;
         let padded = |value: &[u8]| PaddedBigUint::from_be(value).unwrap();
-        let mut engine = tc_rsa_v2::PaddedRsaCoreEngine::new();
+        let mut engine = tc_rsa::PaddedRsaCoreEngine::new();
         engine
             .init(
                 CipherDirection::Encrypt,
-                &tc_rsa_v2::RsaKeyOwned::new(false, padded(&n), padded(&e)),
+                &tc_rsa::RsaKeyOwned::new(false, padded(&n), padded(&e)),
             )
             .unwrap();
         engines.push(("padded", Box::new(engine)));
@@ -62,11 +62,11 @@ fn public_engines() -> Vec<(&'static str, Engine)> {
         use rsa::{BoxedUint, RsaPublicKey};
         let boxed = BoxedUint::from_be_slice_vartime;
         let key = RsaPublicKey::new(boxed(&n), boxed(&e)).unwrap();
-        let mut engine = tc_rsa_v2::RsaCoreEngineRustCrypto::new();
+        let mut engine = tc_rsa::RsaCoreEngineRustCrypto::new();
         engine
             .init(
                 CipherDirection::Encrypt,
-                &tc_rsa_v2::RsaKeyRustCrypto::new(key),
+                &tc_rsa::RsaKeyRustCrypto::new(key),
             )
             .unwrap();
         engines.push(("rustcrypto", Box::new(engine)));
@@ -116,7 +116,7 @@ fn private_engines() -> Vec<(&'static str, Engine)> {
     #[cfg(feature = "alloc")]
     {
         use tc_bigint::PaddedBigUint;
-        use tc_rsa_v2::{
+        use tc_rsa::{
             PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaKeyOwned, RsaPrivateCrtKeyOwned,
         };
         let padded = |value: &[u8]| PaddedBigUint::from_be(value).unwrap();
@@ -158,10 +158,10 @@ fn private_engines() -> Vec<(&'static str, Engine)> {
             vec![boxed(&p), boxed(&q)],
         )
         .unwrap();
-        let key = tc_rsa_v2::RsaPrivateCrtKeyRustCrypto::new(key).unwrap();
-        let mut crt = tc_rsa_v2::RsaCrtCoreEngineRustCrypto::new();
+        let key = tc_rsa::RsaPrivateCrtKeyRustCrypto::new(key).unwrap();
+        let mut crt = tc_rsa::RsaCrtCoreEngineRustCrypto::new();
         crt.init(CipherDirection::Decrypt, &key).unwrap();
-        let mut blinded = RsaBlindedEngine::<tc_rsa_v2::RsaCrtCoreEngineRustCrypto, _>::new(
+        let mut blinded = RsaBlindedEngine::<tc_rsa::RsaCrtCoreEngineRustCrypto, _>::new(
             StdRng::seed_from_u64(3),
         );
         blinded.init(CipherDirection::Decrypt, &key).unwrap();

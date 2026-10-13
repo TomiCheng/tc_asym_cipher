@@ -15,7 +15,7 @@
 //!     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 //!     KeyPairGeneratorInit,
 //! };
-//! use tc_rsa_v2::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+//! use tc_rsa::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
 //!
 //! // 1. Generate a 2048-bit key pair: the public key, and the private one
 //! //    with its CRT values.
@@ -41,7 +41,7 @@
 //! let recovered = &plaintext[256 - message.len()..];
 //! # assert_eq!(recovered, message);
 //! # }
-//! # Ok::<(), tc_rsa_v2::RsaError>(())
+//! # Ok::<(), tc_rsa::RsaError>(())
 //! ```
 
 #![no_std]

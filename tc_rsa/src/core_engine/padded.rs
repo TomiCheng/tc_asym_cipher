@@ -55,7 +55,7 @@ impl Drop for Key {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::PaddedBigUint;
-/// use tc_rsa_v2::{PaddedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{PaddedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
 ///
 /// // 1. Generate a key pair: a 2048-bit modulus and the public exponent
 /// //    65537, drawn from the system's random source; `with_strength`
@@ -79,7 +79,7 @@ impl Drop for Key {
 /// let mut plaintext = vec![0; engine.output_block_size()];
 /// engine.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[plaintext.len() - message.len()..];
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct PaddedRsaCoreEngine {
     key: Option<Key>,

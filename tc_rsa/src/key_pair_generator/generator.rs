@@ -27,7 +27,7 @@ use crate::{RsaError, RsaKeyGenerationParams, RsaKeyOwned, RsaPrivateCrtKeyOwned
 /// ```
 /// use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa_v2::{RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
 ///
 /// // A 2048-bit modulus, with its primes at half that width, so that the
 /// // CRT runs on integers half as wide; the widths follow from the limbs.
@@ -44,7 +44,7 @@ use crate::{RsaError, RsaKeyGenerationParams, RsaKeyOwned, RsaPrivateCrtKeyOwned
 /// // The public key holds `n` and `e`; the private one adds `d` and the
 /// // values of the CRT.
 /// let (public, private) = generator.generate_key_pair()?;
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaKeyPairGenerator<'a, T, H = T> {
     params: Option<Box<dyn RsaKeyGenerationParams + 'a>>,

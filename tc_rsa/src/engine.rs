@@ -116,7 +116,7 @@ macro_rules! each {
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa_v2::{RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
 ///
 /// // 1. Generate a 2048-bit key pair.
 /// let mut generator = RsaKeyGenerator::new();
@@ -137,7 +137,7 @@ macro_rules! each {
 /// engine.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[256 - message.len()..];
 /// # assert_eq!(recovered, message);
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaEngine {
     inner: Option<Inner>,

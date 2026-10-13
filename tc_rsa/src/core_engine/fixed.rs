@@ -55,7 +55,7 @@ impl<const N: usize> Drop for Key<N> {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa_v2::{FixedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
 ///
 /// // Integers of 2048 bits, whatever the width of a limb.
 /// type U2048 = FixedBigUint<{ 2048 / Word::BITS as usize }>;
@@ -82,7 +82,7 @@ impl<const N: usize> Drop for Key<N> {
 /// engine.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[256 - message.len()..];
 /// # }
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct FixedRsaCoreEngine<const N: usize> {
     key: Option<Key<N>>,

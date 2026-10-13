@@ -19,7 +19,7 @@ use crate::{RsaBlinding, RsaError};
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa_v2::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
 ///
 /// // 1. Generate a 2048-bit key pair: the public key, and the private one
 /// //    with its CRT values.
@@ -44,7 +44,7 @@ use crate::{RsaBlinding, RsaError};
 /// decrypt.process_block(&ciphertext, &mut plaintext)?;
 /// let recovered = &plaintext[256 - message.len()..];
 /// # }
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaBlindedEngine<E, R> {
     engine: E,

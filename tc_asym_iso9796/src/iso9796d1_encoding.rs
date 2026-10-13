@@ -7,7 +7,7 @@ use core::fmt;
 use rand_core::CryptoRng;
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection};
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
-use tc_rsa_v2::{RsaBlindedEngine, RsaEngine, RsaKey, RsaKeyParams};
+use tc_rsa::{RsaBlindedEngine, RsaEngine, RsaKey, RsaKeyParams};
 
 use crate::Iso9796Error;
 
@@ -74,7 +74,7 @@ struct State {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_asym_iso9796::Iso9796d1Encoding;
-/// use tc_rsa_v2::{RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaKeyGenerationParamsOwned, RsaKeyGenerator};
 ///
 /// // 1. Generate a 2048-bit key pair.
 /// let mut generator = RsaKeyGenerator::new();

@@ -23,7 +23,7 @@ type Inner<'a> = crate::RsaKeyPairGenerator<'a, tc_bigint::PaddedBigUint>;
 ///
 /// ```
 /// use tc_asym_cipher::{AsymmetricKeyParams, KeyPairGenerator, KeyPairGeneratorInit};
-/// use tc_rsa_v2::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
 ///
 /// // A 2048-bit pair, with the public exponent 65537, drawn from the
 /// // system's random source.
@@ -34,7 +34,7 @@ type Inner<'a> = crate::RsaKeyPairGenerator<'a, tc_bigint::PaddedBigUint>;
 /// // The public key is raised by `e`; the private one through the CRT.
 /// assert!(matches!(public, RsaKey::Core(_)) && !public.is_private_key());
 /// assert!(matches!(private, RsaKey::Crt(_)));
-/// # Ok::<(), tc_rsa_v2::RsaError>(())
+/// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
 pub struct RsaKeyGenerator<'a> {
     inner: Inner<'a>,
