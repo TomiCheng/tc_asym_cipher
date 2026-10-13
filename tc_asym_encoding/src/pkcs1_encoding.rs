@@ -187,10 +187,12 @@ where
             CipherDirection::Encrypt => self.engine.input_block_size(),
             CipherDirection::Decrypt => self.engine.output_block_size(),
         };
-        if let (CipherDirection::Decrypt, true, Some(plaintext)) =
-            (direction, is_private, self.plaintext_length)
-            && plaintext > length.saturating_sub(DECRYPTED_HEADER_LENGTH)
-        {
+        let plaintext_too_long = direction == CipherDirection::Decrypt
+            && is_private
+            && self.plaintext_length.is_some_and(|plaintext| {
+                plaintext > length.saturating_sub(DECRYPTED_HEADER_LENGTH)
+            });
+        if plaintext_too_long {
             return Err(EncodingError::InvalidPlaintextLength);
         }
         // The block is wiped after each use, and so nothing is left behind
