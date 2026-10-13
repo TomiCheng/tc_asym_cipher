@@ -4,6 +4,8 @@
 //! reads the modulus of an RSA key, is left to a crate of its own.
 
 #![no_std]
+#![deny(missing_docs)]
+#![forbid(unsafe_code)]
 
 extern crate alloc;
 
