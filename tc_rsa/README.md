@@ -41,7 +41,7 @@ Rust 1.85 or later. Benchmarks are in [BENCHES.md](BENCHES.md).
 ## Features
 
 - `alloc` (on by default) — the padded engines, `RsaEngine`, `RsaKey`, key generation and blinding for blind signatures; without it, the fixed-width engines remain, for a target with no allocator.
-- `rustcrypto` (off by default) — the engines, keys and generator of the RustCrypto `rsa` crate, which `RsaEngine` and `RsaKeyGenerator` then prefer. `rsa` 0.10 is still a release candidate and pinned exactly, and the feature follows the Rust version it requires, newer than 1.85.
+- `rustcrypto` (off by default) — the engines, keys and generator of the RustCrypto `rsa` crate, which `RsaEngine` and `RsaKeyGenerator` then prefer. `rsa` 0.10 is still a release candidate and pinned exactly, and the feature follows the Rust version that `rsa` and its dependencies require, outside the 1.85 guarantee.
 
 ## Usage
 

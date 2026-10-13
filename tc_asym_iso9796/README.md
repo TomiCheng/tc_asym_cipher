@@ -24,7 +24,7 @@ implemented yet. `no_std` with `alloc`, no `unsafe`, Rust 1.85 or later.
 
 ## Features
 
-- `rustcrypto` (off by default) — turns on the `rustcrypto` feature of `tc_rsa`, so that the encoding runs on the RustCrypto `rsa` engines where they apply. It follows the Rust version that `rsa` requires, newer than 1.85.
+- `rustcrypto` (off by default) — turns on the `rustcrypto` feature of `tc_rsa`, so that the encoding runs on the RustCrypto `rsa` engines where they apply. It follows the Rust version that `rsa` and its dependencies require, outside the 1.85 guarantee.
 
 ## Usage
 

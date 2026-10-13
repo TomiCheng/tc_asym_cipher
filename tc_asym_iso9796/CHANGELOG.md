@@ -22,7 +22,8 @@ Initial release.
 ### Compatibility
 
 - Requires Rust 1.85 or later and uses Rust edition 2024, except with the
-  `rustcrypto` feature, which follows the Rust version of the `rsa` crate.
+  `rustcrypto` feature, which follows the Rust version of the `rsa` crate and
+  its dependencies.
 - `no_std`, and needs `alloc`. Depends on `rand_core` 0.10, `tc_asym_cipher`
   0.1, `tc_bigint` 0.1 and `tc_rsa` 0.1. Contains no `unsafe` code.
 - Variable time, only for public values. ISO 9796-1 is withdrawn: sign only a

@@ -52,6 +52,7 @@ jobs:
           key: ${{ matrix.name }}
       - run: cargo test --locked
       - run: cargo test --locked --all-features
+      - run: cargo test --locked -p tc_rsa --no-default-features
 
   x86:
     name: Native execution / Linux i686
@@ -69,6 +70,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --locked --target i686-unknown-linux-gnu
       - run: cargo test --locked --target i686-unknown-linux-gnu --all-features
+      - run: cargo test --locked --target i686-unknown-linux-gnu -p tc_rsa --no-default-features
 
   msrv:
     name: MSRV / Rust 1.85.0
@@ -81,10 +83,13 @@ jobs:
         env:
           RUSTUP_TOOLCHAIN: 1.85.0
       # Rust 1.85 covers every dependency of the libraries, the tc_* crates,
-      # num-traits and rand_core, with and without features. Dev-dependencies
-      # such as criterion are exempt, so tests run on stable only.
+      # num-traits and rand_core, in every build but one: the rustcrypto
+      # feature of tc_rsa and tc_asym_iso9796 follows the Rust version of the
+      # rsa crate and its dependencies, which the lock may resolve past 1.85,
+      # and is left out. The default build turns every other feature on. Dev-dependencies such as criterion are
+      # exempt, so tests run on stable only.
       - run: cargo +1.85.0 check --locked
-      - run: cargo +1.85.0 check --locked --all-features
+      - run: cargo +1.85.0 check --locked -p tc_rsa --no-default-features
 
   quality:
     name: Format, Clippy, docs and package
@@ -102,9 +107,11 @@ jobs:
           key: build-only
       - run: cargo clippy --locked --all-targets -- -D warnings
       - run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - run: cargo clippy --locked --all-targets -p tc_rsa --no-default-features -- -D warnings
       - run: cargo doc --locked --no-deps
       - run: cargo doc --locked --no-deps --all-features
-      - run: cargo package --locked -p tc_bigint -p tc_modular -p tc_prime
+      - run: cargo doc --locked --no-deps -p tc_rsa --no-default-features
+      - run: cargo package --locked -p tc_asym_cipher -p tc_rsa -p tc_asym_encoding -p tc_asym_iso9796
         env:
           # Keep unpacked package manifests outside rust-cache's build tree.
           CARGO_TARGET_DIR: ${{ runner.temp }}/package
@@ -121,8 +128,10 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo check --locked --target wasm32-unknown-unknown
       - run: cargo check --locked --target wasm32-unknown-unknown --all-features
+      - run: cargo check --locked --target wasm32-unknown-unknown -p tc_rsa --no-default-features
       - run: cargo check --locked --target aarch64-unknown-none
       - run: cargo check --locked --target aarch64-unknown-none --all-features
+      - run: cargo check --locked --target aarch64-unknown-none -p tc_rsa --no-default-features
       - name: Check dependency sets
         run: |
           check() {
@@ -135,15 +144,14 @@ jobs:
             fi
           }
           # No dependency is platform-specific, so every target shares one set.
+          # The rustcrypto sets name the dependencies of the rsa crate, which
+          # is pinned to one release candidate.
           for target in aarch64-unknown-none wasm32-unknown-unknown x86_64-unknown-linux-gnu i686-unknown-linux-gnu; do
-            check 'num-traits tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target"
-            check 'num-traits tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --features alloc
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --features rand_core
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_zeroize' -p tc_bigint --target "$target" --all-features
-            check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target"
-            check 'num-traits tc_bigint tc_constant_time tc_modular tc_zeroize' -p tc_modular --target "$target" --features alloc
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target"
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features alloc
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --features shawe-taylor
-            check 'num-traits rand_core tc_bigint tc_constant_time tc_digest tc_modular tc_prime tc_zeroize' -p tc_prime --target "$target" --all-features
+            check 'tc_asym_cipher' -p tc_asym_cipher --target "$target"
+            check 'num-traits rand_core tc_asym_cipher tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize' -p tc_rsa --target "$target"
+            check 'num-traits rand_core tc_asym_cipher tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize' -p tc_rsa --target "$target" --no-default-features
+            check 'cmov const-oid cpubits crypto-bigint crypto-common crypto-primes ctutils digest hybrid-array num-traits rand_core rsa signature tc_asym_cipher tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize typenum zeroize' -p tc_rsa --target "$target" --all-features
+            check 'rand_core tc_asym_cipher tc_asym_encoding tc_digest tc_zeroize' -p tc_asym_encoding --target "$target"
+            check 'num-traits rand_core tc_asym_cipher tc_asym_iso9796 tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize' -p tc_asym_iso9796 --target "$target"
+            check 'cmov const-oid cpubits crypto-bigint crypto-common crypto-primes ctutils digest hybrid-array num-traits rand_core rsa signature tc_asym_cipher tc_asym_iso9796 tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize typenum zeroize' -p tc_asym_iso9796 --target "$target" --all-features
           done

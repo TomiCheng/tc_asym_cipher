@@ -47,7 +47,8 @@ Initial release.
 ### Compatibility
 
 - Requires Rust 1.85 or later and uses Rust edition 2024, except with the
-  `rustcrypto` feature, which follows the Rust version of the `rsa` crate.
+  `rustcrypto` feature, which follows the Rust version of the `rsa` crate and
+  its dependencies.
 - Depends on `num-traits` 0.2, `rand_core` 0.10, `tc_asym_cipher` 0.1,
   `tc_bigint` 0.1, `tc_modular` 0.1, `tc_prime` 0.1 and `tc_zeroize` 0.1, and,
   with `rustcrypto`, on `rsa` `=0.10.0-rc.19`, a release candidate pinned

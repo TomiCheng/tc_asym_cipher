@@ -28,71 +28,77 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The crate list and workspace-wide checks live in the root
 [README.md](README.md); read it rather than restating it here. Every crate is
-`no_std` and needs no allocator by default.
+`no_std`. `tc_asym_cipher` needs no allocator; `tc_rsa` turns its `alloc`
+feature on by default and keeps its fixed-width engines without it; the
+encodings always use `alloc` for their block buffers.
 
-`tc_bigint` holds big integers in three kinds, each unsigned and signed:
-`FixedBigUint<N>` and `FixedBigInt<N>` of `N` limbs on the stack,
-`PaddedBigUint` and `PaddedBigInt` at a width fixed when built, and `BigUint`
-and `BigInt` at arbitrary precision, over `Limb`, `LimbArray<N>` and `Word`,
-which is `u64` on 64-bit targets and `u32` otherwise. `N` counts limbs, not
-bits. The signed types are two's complement. A padded binary operation
-extends the narrower operand to the wider width and judges overflow against
-it. The `alloc` feature adds the padded and big types, and `rand_core` adds
-`RandomBits` and `RandomRange`; both are default-off. It depends on
-`num-traits` without default features, `tc_constant_time`, `tc_zeroize` and,
-with `rand_core`, `rand_core`, on every target, and CI enforces that set with
-`cargo tree` on the `wasm32-unknown-unknown`, `aarch64-unknown-none` and x86
-targets.
+The crates follow Bouncy Castle's asymmetric classes and keep their names
+where they fit. `tc_asym_cipher` holds the contracts alone:
+`AsymmetricBlockCipher` and `AsymmetricBlockCipherInit<P>`, after
+`IAsymmetricBlockCipher`, `KeyPairGenerator` and `KeyPairGeneratorInit<P>`,
+after `IAsymmetricCipherKeyPairGenerator`, `AsymmetricKeyParams`, through
+which an encoding learns whether a key is private, and `CipherDirection`.
+Initialization and processing are separate traits, the cipher's `init` takes
+its key by reference, and the generator's takes its parameters by value, since
+they carry the random source. The traits make no timing promise. The crate
+has no dependencies.
 
-The operators panic on overflow in every build, as the primitive integers do
-in debug builds; the `num-traits` checked, wrapping, saturating and
-overflowing forms are the alternatives. The fixed-width and padded types are
-constant time in their values; widths, shift amounts and exponents are public.
-The big types are variable time, only for public values, and each names the
-padded type that takes secret ones. `tests/constant_time.rs` scans every file
-under `src` and requires each public function and trait implementation to
-say "Constant time" or "Variable time" in its doc, each variable-time one to
-say it is only for public values, and constant-time code to call nothing that
-only variable-time items define. Keep the timing contract of each item stated
-in its doc comment. The constant-time types wipe through volatile writes the
-working values an operation gives up; the values they return are the
-caller's to wipe, and none of them has a `Drop` of its own. `Debug` on `Limb`
-never prints the word.
+`tc_rsa` holds the engines, each an `AsymmetricBlockCipher`: RSA without the
+CRT and with it, over `FixedBigUint` with no allocator and over
+`PaddedBigUint` with `alloc`, and, behind `rustcrypto`, over the RustCrypto
+`rsa` crate. Every engine writes the whole of its output block, leading zeros
+kept, and leaves trimming to the padding, so the length of a decryption shows
+nothing; the CRT engines check each result by raising it back to `e`.
+`RsaBlindedEngine` blinds the private operation of any engine that implements
+`RsaBlinding`. With `alloc`, `RsaKey` holds a key over `PaddedBigUint`,
+`RsaEngine` runs it on the engine the key and the features suit best, and
+`RsaKeyGenerator` generates pairs of it; `RsaKeyPairGenerator` generates into
+the caller's integer types, and the blinding engine, factor generator and
+parameters serve blind signatures. Keys validate once, as Bouncy Castle's
+`RsaKeyParameters` does, and owned keys wipe themselves on drop. The engines
+are constant time in the input and the private key; the public exponent and
+the outcome of range and key checks show. Key generation is variable time.
+`tests/engines_agree.rs` runs every engine on the same Wycheproof key, and
+`tests/generated_keys.rs` runs the keys of each generator on the engines of
+the other.
 
-`tc_modular` builds on the public interface of `tc_bigint` alone, reading
-values through their limbs, and keeps the limb arithmetic it needs to
-itself. The `Mod*` traits take operands of any size and a `NonZero`
-modulus of either parity. The Montgomery parameters and forms take an `Odd`
-one: `FixedMontyForm` holds its own copy of the parameters, while the padded
-and big forms borrow theirs. `ModPow` goes through Montgomery form for an
-odd modulus and multiplies on the residues for an even one. `ModInverse`
-uses safegcd for an odd modulus and the binary extended GCD for an even one.
-The parity of the modulus therefore picks the path and shows in the timing,
-and whether an inverse exists shows in the `Option`. Everything else over
-the fixed-width and padded integers is constant time. Over `BigUint`, going
-in and out of a form is variable time. Its own `tests/constant_time.rs`
-holds it to the same timing rules as `tc_bigint`. It depends on
-`num-traits`, `tc_bigint`, `tc_constant_time` and `tc_zeroize` with or
-without `alloc`.
+`tc_asym_encoding` holds `Pkcs1Encoding` and `OaepEncoding`, each an
+asymmetric block cipher over any engine, and `EncodingError`, which wraps the
+engine's error. PKCS#1 v1.5 takes the block type from whether the key is
+private; with `with_plaintext_length` it gives back random bytes in place of a
+bad block, against Bleichenbacher's attack. OAEP runs MGF1 over a `tc_digest`
+digest and reports every bad block as one `InvalidBlock`, found after the
+whole block is checked. Both are constant time in the message and the block,
+apart from the engine and the digest. ISO 9796-1 reads the modulus of an RSA
+key, so it lives in `tc_asym_iso9796`, over a blinded `RsaEngine`, not here.
 
-`tc_prime` holds `Primality` and, behind the `shawe-taylor` feature,
-`ShaweTaylor`, after Bouncy Castle's `Primes`, with its names for the
-results: `MrOutput`, `StOutput` and `StError`. Both traits cover
-`FixedBigUint<N>` and, with `alloc`, `PaddedBigUint` and `BigUint`. Every
-test and generator is variable time, as Bouncy Castle's are, and each one
-says so; its `tests/constant_time.rs` checks that. The caller gives the
-`rand_core` generator, and the crate holds no source of randomness of its
-own. `rand_core` is a default dependency here, and it turns on the
-`rand_core` feature of `tc_bigint`. `shawe-taylor` adds `tc_digest` and
-turns on `alloc`; its tests use `tc_sha` as a dev-dependency.
+`tc_asym_iso9796` holds `Iso9796d1Encoding` and `Iso9796Error`. It turns down
+the moduli, messages and blocks on which Bouncy Castle reads out of bounds,
+cuts short or loops, and is variable time, only for public values. Part 2,
+`Iso9796d2Signer`, is not implemented; its crate documentation says so.
+
+Each crate but `tc_asym_cipher` has a `tests/documentation.rs` that requires
+its declarations to say "constant time" or "variable time", exactly one,
+matched without case and across wrapped lines. `tc_rsa`'s reads every file
+under `src` and holds every public function and every trait implementation
+with a method to it, in the implementation's doc or in each method's; the
+encodings' read the files they name and the declarations they list. A mixed
+contract names one classification and describes the other part without the
+phrase, as "constant time in the input and the private key; the public
+exponent shows". Keep the timing contract of each item stated in its doc
+comment.
 
 `unsafe` code is forbidden at every crate root.
 
-Rust 1.85 is guaranteed for every build. Besides `tc_*` crates, the libraries
-depend on `num-traits` and, behind a feature, `rand_core`, and both build
-on 1.85; dev-dependencies such as `criterion` are exempt. The MSRV job
-therefore runs `cargo check` on 1.85 with and without features; tests run on
-stable. `.cargo/config.toml` sets `incompatible-rust-versions = "allow"` so
+Rust 1.85 is guaranteed for every build but one. Besides `tc_*` crates, the
+libraries depend on `num-traits` and `rand_core`, and both build on 1.85;
+dev-dependencies such as `criterion` and `rand` are exempt. The exception is
+the default-off `rustcrypto` feature of `tc_rsa`, which `tc_asym_iso9796`
+forwards: it brings in `rsa`, pinned to one release candidate, with `zeroize`,
+and follows the Rust version they and their dependencies require. The MSRV
+job therefore runs `cargo check` on 1.85 on the default build, which turns
+every other feature on, and on `tc_rsa` without default features; tests run
+on stable. `.cargo/config.toml` sets `incompatible-rust-versions = "allow"` so
 `Cargo.lock` tracks the latest releases and stable CI tests what current
 toolchains resolve. Adding another third-party dependency to a default build
 or a first-party feature hands the 1.85 guarantee to that crate; raise it
