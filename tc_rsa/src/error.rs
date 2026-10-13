@@ -2,6 +2,7 @@
 
 /// What can go wrong in RSA.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[non_exhaustive]
 pub enum RsaError {
     /// The operation ran before it was initialized.
     NotInitialized,

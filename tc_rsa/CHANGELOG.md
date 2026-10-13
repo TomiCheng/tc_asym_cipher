@@ -36,8 +36,8 @@ Initial release.
   `RsaCrtCoreEngineRustCrypto`, `RsaKeyPairGeneratorRustCrypto`,
   `RsaKeyRustCrypto` and `RsaPrivateCrtKeyRustCrypto` over the RustCrypto
   `rsa` crate, which `RsaEngine` and `RsaKeyGenerator` then prefer.
-- `RsaError`, and `ALGO_NAME`, the name every engine writes through
-  `Display`.
+- `RsaError`, `#[non_exhaustive]`, and `ALGO_NAME`, the name every engine
+  writes through `Display`.
 - Tests that every engine runs Wycheproof's first 2048-bit PKCS#1 key to the
   same blocks, that the keys of each generator run on the engines of the
   other, and that every public function and trait implementation documents
