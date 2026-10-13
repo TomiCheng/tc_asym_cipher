@@ -163,8 +163,9 @@ where
 /// when the result does not raise back to `x`, writing nothing; otherwise
 /// it writes the result over the full length of the modulus. As constant
 /// time as `rsa` and `crypto-bigint` make the powers in the secret values;
-/// the check raises to the public `e` in variable time, and the outcome of
-/// the range check and of the check of the result show in the error.
+/// the time of the check, which raises to the public `e`, may follow `e`,
+/// and the outcome of the range check and of the check of the result show
+/// in the error.
 impl AsymmetricBlockCipher for RsaCrtCoreEngineRustCrypto {
     type Error = RsaError;
 

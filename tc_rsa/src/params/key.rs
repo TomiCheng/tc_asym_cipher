@@ -104,9 +104,9 @@ impl AsymmetricKeyParams for RsaKey {
 
 /// The modulus, the exponent the key is raised by, `d` for a
 /// [`Crt`](RsaKey::Crt) key, and the check of the key the variant holds,
-/// once. Constant time, but for `validate`, which is variable time: only
-/// for public values, as the modulus is.
+/// once.
 impl RsaKeyParams<PaddedBigUint> for RsaKey {
+    /// The modulus of the key the variant holds. Constant time.
     fn modulus(&self) -> &PaddedBigUint {
         match self {
             Self::Core(key) => key.modulus(),
@@ -114,6 +114,8 @@ impl RsaKeyParams<PaddedBigUint> for RsaKey {
         }
     }
 
+    /// The exponent the key is raised by, `d` for a [`Crt`](RsaKey::Crt)
+    /// key. Constant time.
     fn exponent(&self) -> &PaddedBigUint {
         match self {
             Self::Core(key) => key.exponent(),
@@ -121,6 +123,8 @@ impl RsaKeyParams<PaddedBigUint> for RsaKey {
         }
     }
 
+    /// The check of the key the variant holds, run once. Variable time:
+    /// only for public values, as the modulus is.
     fn validate(&self) -> bool {
         match self {
             Self::Core(key) => key.validate(),

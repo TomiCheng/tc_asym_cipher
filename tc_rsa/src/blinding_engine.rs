@@ -119,9 +119,10 @@ impl core::fmt::Display for RsaBlindingEngine {
 /// private key, as Bouncy Castle's `RsaBlindingParameters` does, or one
 /// that does not pass, and with `InvalidBlindingFactor` for a factor
 /// below 2 or without an inverse modulo `n`. A failed `init` leaves the
-/// engine uninitialized. Constant time in the factor, apart from the
-/// outcome of its checks, which the error shows; variable time in the
-/// public key.
+/// engine uninitialized. Variable time in the public key, the only value
+/// whose time it follows: the factor is checked and copied in without a
+/// branch on its value, and only the outcome of its checks, which the
+/// error shows, comes out.
 impl AsymmetricBlockCipherInit<RsaBlindingParams> for RsaBlindingEngine {
     type Error = RsaError;
 

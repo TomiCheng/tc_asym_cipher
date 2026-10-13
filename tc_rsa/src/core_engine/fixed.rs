@@ -150,10 +150,11 @@ where
 /// Reads the input as a big-endian integer `x` with `1 < x < n - 1`, as
 /// Bouncy Castle does, raises it to the exponent mod `n` in Montgomery
 /// form, and writes the result over the full length of the modulus. A
-/// private exponent is raised to in constant time, over every bit of its
-/// width; a public one from its top bit only, in variable time, as `e` is
-/// public, so that encryption and verification cost the few squarings of
-/// `e`. The outcome of the range check shows in the error.
+/// private exponent is raised to over every bit of its width; a public one
+/// from its top bit only, as `e` is public, so that encryption and
+/// verification cost the few squarings of `e`. Constant time in the input
+/// and a private exponent; the outcome of the range check shows in the
+/// error.
 impl<const N: usize> AsymmetricBlockCipher for FixedRsaCoreEngine<N> {
     type Error = RsaError;
 

@@ -72,7 +72,8 @@ impl<E, R> RsaBlindedEngine<E, R> {
 }
 
 /// Writes the name of the engine, as Bouncy Castle's `RsaBlindedEngine`
-/// names itself after its core. Timing is that of the engine's `Display`.
+/// names itself after its core. Constant time exactly when the engine's
+/// `Display` is.
 impl<E: core::fmt::Display, R> core::fmt::Display for RsaBlindedEngine<E, R> {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         self.engine.fmt(f)

@@ -179,8 +179,8 @@ where
 /// checks that `m^e mod n` is `x` again, and fails with
 /// `FaultyDecryptionOrSigning` otherwise, writing nothing. Constant time in
 /// the secret values; the check raises to the public `e` from its top bit
-/// only, in variable time, as `e` is public, and the outcome of the range
-/// check and of the check of the result show in the error. There is no
+/// only, as `e` is public, and the outcome of the range check and of the
+/// check of the result show in the error. There is no
 /// blinding: a caller who needs it blinds the input, as Bouncy Castle's
 /// `RsaBlindedEngine` does.
 impl<const N: usize, const H: usize> AsymmetricBlockCipher for FixedRsaCrtCoreEngine<N, H> {
