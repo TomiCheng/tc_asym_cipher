@@ -1,0 +1,13 @@
+[package]
+name = "tc_asym_cipher"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Shared contracts for asymmetric block ciphers and key pair generators, after Bouncy Castle's IAsymmetricBlockCipher."
+readme = "README.md"
+documentation = "https://docs.rs/tc_asym_cipher"
+keywords = ["asymmetric", "public-key", "cryptography", "no-std", "traits"]
+categories = ["cryptography", "no-std::no-alloc"]
+include = ["src/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
