@@ -38,9 +38,9 @@ where they fit. `tc_asym_cipher` holds the contracts alone:
 `IAsymmetricBlockCipher`, `KeyPairGenerator` and `KeyPairGeneratorInit<P>`,
 after `IAsymmetricCipherKeyPairGenerator`, `AsymmetricKeyParams`, through
 which an encoding learns whether a key is private, and `CipherDirection`.
-Initialization and processing are separate traits, the cipher's `init` takes
-its key by reference, and the generator's takes its parameters by value, since
-they carry the random source. The traits make no timing promise. The crate
+Initialization and processing are separate traits, and both `init`s take
+their parameters by reference; a generator that needs randomness takes its
+random source when it is constructed. The traits make no timing promise. The crate
 has no dependencies.
 
 `tc_rsa` holds the engines, each an `AsymmetricBlockCipher`: RSA without the

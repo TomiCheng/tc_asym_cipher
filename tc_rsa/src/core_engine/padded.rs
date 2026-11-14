@@ -55,13 +55,13 @@ impl Drop for Key {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::PaddedBigUint;
-/// use tc_rsa::{PaddedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{PaddedRsaCoreEngine, RsaKeyGenerationParams, RsaKeyPairGenerator};
 ///
 /// // 1. Generate a key pair: a 2048-bit modulus and the public exponent
 /// //    65537, drawn from the system's random source; `with_strength`
 /// //    picks another size.
-/// let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()).with_strength(2048))?;
+/// let mut generator = RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new().with_strength(2048))?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key. Raw RSA is shown here; a real

@@ -2,6 +2,22 @@
 
 All notable changes to `tc_rsa` are documented in this file.
 
+## Unreleased
+
+### Changed
+
+- **Breaking:** the key-pair generators take their random source when they
+  are constructed, `new(rng)`, and are initialized with
+  `&RsaKeyGenerationParams`, as `KeyPairGeneratorInit::init` of
+  `tc_asym_cipher` now takes its parameters by reference. The parameters
+  hold data alone, so they can be kept and used again.
+- **Breaking:** `RsaKeyGenerationParams` is a plain struct, of the public
+  exponent, the strength and the certainty, in place of the trait of that
+  name and of `RsaKeyGenerationParamsOwned` and `RsaKeyGenerationParamsRef`,
+  which are removed. `RsaKeyPairGenerator<T, H, R>`, `RsaKeyGenerator<R>`
+  and `RsaKeyPairGeneratorRustCrypto<R>` take the type of the random source
+  in place of a lifetime, and no longer implement `Default`.
+
 ## 0.1.0 - 2026-10-13
 
 Initial release.

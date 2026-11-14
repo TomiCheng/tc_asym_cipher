@@ -52,12 +52,12 @@ impl Drop for Key {
 /// };
 /// use tc_rsa::{
 ///     RsaBlindingEngine, RsaBlindingFactorGenerator, RsaBlindingParams, RsaEngine,
-///     RsaKeyGenerationParamsOwned, RsaKeyGenerator,
+///     RsaKeyGenerationParams, RsaKeyGenerator,
 /// };
 ///
 /// // The signer's key pair.
-/// let mut generator = RsaKeyGenerator::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyGenerator::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 1. The requester draws a blinding factor for the signer's public key,
@@ -274,12 +274,12 @@ mod tests {
         use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
 
         use crate::{
-            RsaBlindingFactorGenerator, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator,
+            RsaBlindingFactorGenerator, RsaEngine, RsaKeyGenerationParams, RsaKeyGenerator,
         };
 
-        let mut generator = RsaKeyGenerator::new();
-        let params = RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(5)).with_strength(1024);
-        generator.init(params).unwrap();
+        let mut generator = RsaKeyGenerator::new(StdRng::seed_from_u64(5));
+        let params = RsaKeyGenerationParams::new().with_strength(1024);
+        generator.init(&params).unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
         let mut factors = RsaBlindingFactorGenerator::new(StdRng::seed_from_u64(6));
         factors.init(&public).unwrap();

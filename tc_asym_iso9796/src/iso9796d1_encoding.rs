@@ -74,11 +74,11 @@ struct State {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_asym_iso9796::Iso9796d1Encoding;
-/// use tc_rsa::{RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaKeyGenerationParams, RsaKeyGenerator};
 ///
 /// // 1. Generate a 2048-bit key pair.
-/// let mut generator = RsaKeyGenerator::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyGenerator::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Sign a hash, of at most 128 bytes, with the private key, blinded

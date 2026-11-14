@@ -64,14 +64,14 @@ impl Drop for CrtKey {
 /// };
 /// use tc_bigint::PaddedBigUint;
 /// use tc_rsa::{
-///     PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaKeyGenerationParamsOwned,
+///     PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaKeyGenerationParams,
 ///     RsaKeyPairGenerator,
 /// };
 ///
 /// // 1. Generate a key pair: a 2048-bit modulus and the public exponent
 /// //    65537; the primes and the CRT values come at half the width.
-/// let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key, which has no CRT. Raw RSA is
@@ -318,8 +318,8 @@ mod tests {
     use super::PaddedRsaCrtCoreEngine;
     use crate::testing::{D, DP, DQ, N, P, Q, Q_INV};
     use crate::{
-        PaddedRsaCoreEngine, RsaError, RsaKeyGenerationParamsOwned, RsaKeyOwned,
-        RsaKeyPairGenerator, RsaKeyParams, RsaPrivateCrtKeyOwned, RsaPrivateCrtKeyParams,
+        PaddedRsaCoreEngine, RsaError, RsaKeyGenerationParams, RsaKeyOwned, RsaKeyPairGenerator,
+        RsaKeyParams, RsaPrivateCrtKeyOwned, RsaPrivateCrtKeyParams,
     };
 
     fn int(text: &str) -> PaddedBigUint {
@@ -405,9 +405,10 @@ mod tests {
 
     #[test]
     fn a_generated_key_signs_and_its_public_key_verifies() {
-        let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
+        let mut generator =
+            RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(StdRng::seed_from_u64(1));
         generator
-            .init(RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(1)).with_strength(1024))
+            .init(&RsaKeyGenerationParams::new().with_strength(1024))
             .unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
 

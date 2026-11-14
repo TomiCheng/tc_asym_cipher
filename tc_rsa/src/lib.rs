@@ -15,12 +15,12 @@
 //!     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 //!     KeyPairGeneratorInit,
 //! };
-//! use tc_rsa::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+//! use tc_rsa::{RsaBlindedEngine, RsaEngine, RsaKeyGenerationParams, RsaKeyGenerator};
 //!
 //! // 1. Generate a 2048-bit key pair: the public key, and the private one
 //! //    with its CRT values.
-//! let mut generator = RsaKeyGenerator::new();
-//! generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+//! let mut generator = RsaKeyGenerator::new(rand::rng());
+//! generator.init(&RsaKeyGenerationParams::new())?;
 //! let (public, private) = generator.generate_key_pair()?;
 //!
 //! // 2. Encrypt a block with the public key. Raw RSA is shown here; a real
@@ -101,9 +101,7 @@ pub use params::RsaBlindingParams;
 #[cfg(feature = "alloc")]
 pub use params::RsaKey;
 #[cfg(feature = "alloc")]
-pub use params::RsaKeyGenerationParamsOwned;
-#[cfg(feature = "alloc")]
-pub use params::RsaKeyGenerationParamsRef;
+pub use params::RsaKeyGenerationParams;
 pub use params::RsaKeyOwned;
 pub use params::RsaKeyRef;
 #[cfg(feature = "rustcrypto")]
@@ -113,7 +111,5 @@ pub use params::RsaPrivateCrtKeyRef;
 #[cfg(feature = "rustcrypto")]
 pub use params::RsaPrivateCrtKeyRustCrypto;
 pub use traits::RsaBlinding;
-#[cfg(feature = "alloc")]
-pub use traits::RsaKeyGenerationParams;
 pub use traits::RsaKeyParams;
 pub use traits::RsaPrivateCrtKeyParams;
