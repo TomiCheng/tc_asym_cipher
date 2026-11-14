@@ -69,7 +69,7 @@ impl<const N: usize, const H: usize> Drop for CrtKey<N, H> {
 /// };
 /// use tc_bigint::{FixedBigUint, Word};
 /// use tc_rsa::{
-///     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator,
+///     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, RsaKeyGenerationParams, RsaKeyPairGenerator,
 /// };
 ///
 /// // A 2048-bit modulus, with its primes at half that width, which is what
@@ -78,8 +78,8 @@ impl<const N: usize, const H: usize> Drop for CrtKey<N, H> {
 /// type U1024 = FixedBigUint<{ 1024 / Word::BITS as usize }>;
 ///
 /// // 1. Generate a key pair, its primes and CRT values at 1024 bits.
-/// let mut generator = RsaKeyPairGenerator::<U2048, U1024>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGenerator::<U2048, U1024, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key, which has no CRT. Raw RSA is

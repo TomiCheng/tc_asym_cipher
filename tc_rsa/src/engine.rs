@@ -116,11 +116,11 @@ macro_rules! each {
 ///     AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator,
 ///     KeyPairGeneratorInit,
 /// };
-/// use tc_rsa::{RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaEngine, RsaKeyGenerationParams, RsaKeyGenerator};
 ///
 /// // 1. Generate a 2048-bit key pair.
-/// let mut generator = RsaKeyGenerator::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyGenerator::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key. Raw RSA is shown here; a real
@@ -582,7 +582,7 @@ mod tests {
     use super::RsaEngine;
     use crate::{
         PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaBlindedEngine, RsaError, RsaKey,
-        RsaKeyGenerationParamsOwned, RsaKeyGenerator, RsaKeyOwned, RsaKeyParams,
+        RsaKeyGenerationParams, RsaKeyGenerator, RsaKeyOwned, RsaKeyParams,
     };
 
     fn int(value: u32) -> PaddedBigUint {
@@ -709,9 +709,9 @@ mod tests {
 
     #[test]
     fn a_generated_pair_gives_what_the_padded_engines_give() {
-        let mut generator = RsaKeyGenerator::new();
-        let params = RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(3)).with_strength(1024);
-        generator.init(params).unwrap();
+        let mut generator = RsaKeyGenerator::new(StdRng::seed_from_u64(3));
+        let params = RsaKeyGenerationParams::new().with_strength(1024);
+        generator.init(&params).unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
         let RsaKey::Crt(crt) = &private else {
             panic!("a generated private key holds its CRT values");

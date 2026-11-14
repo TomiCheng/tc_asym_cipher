@@ -19,7 +19,7 @@ wraps any engine that does. `no_std`, no allocator, no dependencies, no
 - `AsymmetricBlockCipherInit<P>` — `init` with a direction and a key of type `P`.
 - `AsymmetricKeyParams` — whether a key is private.
 - `KeyPairGenerator` — `generate_key_pair` returns the public and the private key.
-- `KeyPairGeneratorInit<P>` — `init` with parameters that carry the random source.
+- `KeyPairGeneratorInit<P>` — `init` with parameters of type `P`, by reference; the random source comes with the generator.
 
 ## Types
 

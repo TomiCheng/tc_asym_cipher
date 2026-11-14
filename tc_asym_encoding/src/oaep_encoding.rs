@@ -52,14 +52,14 @@ const SEPARATOR: u8 = 0x01;
 /// };
 /// use tc_asym_encoding::OaepEncoding;
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParams, RsaKeyPairGenerator};
 /// use tc_sha::Sha256Digest;
 ///
 /// type U2048 = FixedBigUint<{ 2048 / Word::BITS as usize }>;
 ///
 /// // 1. Generate a 2048-bit key pair.
-/// let mut generator = RsaKeyPairGenerator::<U2048>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGenerator::<U2048, U2048, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt with the public key, with SHA-256 for the label and MGF1:

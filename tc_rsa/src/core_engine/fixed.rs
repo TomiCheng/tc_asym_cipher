@@ -55,15 +55,15 @@ impl<const N: usize> Drop for Key<N> {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParams, RsaKeyPairGenerator};
 ///
 /// // Integers of 2048 bits, whatever the width of a limb.
 /// type U2048 = FixedBigUint<{ 2048 / Word::BITS as usize }>;
 ///
 /// // 1. Generate a key pair: by default a 2048-bit modulus and the public
 /// //    exponent 65537, drawn from the system's random source.
-/// let mut generator = RsaKeyPairGenerator::<U2048>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGenerator::<U2048, U2048, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key. Raw RSA is shown here; a real

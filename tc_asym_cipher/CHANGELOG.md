@@ -2,6 +2,17 @@
 
 All notable changes to `tc_asym_cipher` are documented in this file.
 
+## Unreleased
+
+### Changed
+
+- **Breaking:** `KeyPairGeneratorInit<P>` takes its parameters by reference,
+  `init(&mut self, params: &P)`, with `P: ?Sized`, as the cipher traits do.
+  The random source no longer travels in the parameters: a generator that
+  needs one takes it when it is constructed, so parameters hold data alone,
+  can be reused, and need no lifetime. Generators written for 0.1 change
+  their `init` and take their source in `new` instead.
+
 ## 0.1.0 - 2026-10-13
 
 Initial release.

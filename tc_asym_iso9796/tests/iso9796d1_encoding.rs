@@ -11,7 +11,7 @@ use tc_asym_cipher::{
 };
 use tc_asym_iso9796::{Iso9796Error, Iso9796d1Encoding};
 use tc_bigint::PaddedBigUint;
-use tc_rsa::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+use tc_rsa::{RsaKey, RsaKeyGenerationParams, RsaKeyPairGenerator};
 
 type Encoding = Iso9796d1Encoding<StdRng>;
 type Error = Iso9796Error;
@@ -202,9 +202,9 @@ fn moduli_of_each_size_taken_round_trip_and_the_others_are_turned_down() {
     for bits in 512..528 {
         let rng = StdRng::seed_from_u64(u64::from(bits));
         // Generated in this crate, as rsa takes no modulus below 1024 bits.
-        let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
+        let mut generator = RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(rng);
         generator
-            .init(RsaKeyGenerationParamsOwned::new(rng).with_strength(bits))
+            .init(&RsaKeyGenerationParams::new().with_strength(bits))
             .unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
         let (public, private) = (RsaKey::from(public), RsaKey::from(private));

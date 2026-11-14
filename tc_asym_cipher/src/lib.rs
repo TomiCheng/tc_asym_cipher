@@ -20,8 +20,9 @@
 //! [`AsymmetricKeyParams`] whether it is private, which an encoding reads
 //! to pick its format.
 //!
-//! A key pair generator takes its parameters, random source included,
-//! through [`KeyPairGeneratorInit::init`], and
+//! A key pair generator takes its random source, if it needs one, when it is
+//! constructed, and its parameters, which hold data alone, by reference
+//! through [`KeyPairGeneratorInit::init`];
 //! [`KeyPairGenerator::generate_key_pair`] then returns the public and the
 //! private key.
 //!
