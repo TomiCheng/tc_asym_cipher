@@ -66,13 +66,13 @@ impl TryCryptoRng for NoRng {}
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_rsa::{
-///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned,
+///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParams,
 ///     RsaKeyPairGeneratorRustCrypto,
 /// };
 ///
 /// // 1. Generate a key pair through `rsa`.
-/// let mut generator = RsaKeyPairGeneratorRustCrypto::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGeneratorRustCrypto::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Sign a block with the private key, through the CRT. Raw RSA is
@@ -247,15 +247,14 @@ mod tests {
 
     use super::RsaCrtCoreEngineRustCrypto;
     use crate::{
-        RsaCoreEngineRustCrypto, RsaError, RsaKeyGenerationParamsOwned,
-        RsaKeyPairGeneratorRustCrypto,
+        RsaCoreEngineRustCrypto, RsaError, RsaKeyGenerationParams, RsaKeyPairGeneratorRustCrypto,
     };
 
     #[test]
     fn a_block_encrypted_with_the_public_key_comes_back_through_the_crt() {
-        let mut generator = RsaKeyPairGeneratorRustCrypto::new();
+        let mut generator = RsaKeyPairGeneratorRustCrypto::new(StdRng::seed_from_u64(1));
         generator
-            .init(RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(1)).with_strength(1024))
+            .init(&RsaKeyGenerationParams::new().with_strength(1024))
             .unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
 
@@ -280,9 +279,9 @@ mod tests {
 
     #[test]
     fn a_blinded_block_comes_out_as_the_unblinded_one() {
-        let mut generator = RsaKeyPairGeneratorRustCrypto::new();
+        let mut generator = RsaKeyPairGeneratorRustCrypto::new(StdRng::seed_from_u64(4));
         generator
-            .init(RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(4)).with_strength(1024))
+            .init(&RsaKeyGenerationParams::new().with_strength(1024))
             .unwrap();
         let (_, private) = generator.generate_key_pair().unwrap();
         let mut plain = RsaCrtCoreEngineRustCrypto::new();

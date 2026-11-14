@@ -23,7 +23,7 @@ use tc_asym_cipher::{
 use tc_bigint::{ArrayEncoding, FixedBigUint, PaddedBigUint, Word};
 use tc_rsa::{
     FixedRsaCoreEngine, FixedRsaCrtCoreEngine, PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine,
-    RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaError, RsaKeyGenerationParamsOwned,
+    RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaError, RsaKeyGenerationParams,
     RsaKeyOwned, RsaKeyPairGenerator, RsaKeyPairGeneratorRustCrypto, RsaKeyRustCrypto,
     RsaPrivateCrtKeyOwned, RsaPrivateCrtKeyRustCrypto,
 };
@@ -144,29 +144,30 @@ fn engines(c: &mut Criterion) {
 fn key_generation(c: &mut Criterion) {
     let mut group = c.benchmark_group("key_generation");
     group.sample_size(10);
+    let params = RsaKeyGenerationParams::new();
     let mut seed = 0;
-    let mut params = move || {
+    let mut rng = move || {
         seed += 1;
-        RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(seed))
+        StdRng::seed_from_u64(seed)
     };
     group.bench_function("fixed", |b| {
         b.iter(|| {
-            let mut generator = RsaKeyPairGenerator::<U2048, U1024>::new();
-            generator.init(params()).unwrap();
+            let mut generator = RsaKeyPairGenerator::<U2048, U1024, _>::new(rng());
+            generator.init(&params).unwrap();
             black_box(generator.generate_key_pair().unwrap());
         });
     });
     group.bench_function("padded", |b| {
         b.iter(|| {
-            let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
-            generator.init(params()).unwrap();
+            let mut generator = RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(rng());
+            generator.init(&params).unwrap();
             black_box(generator.generate_key_pair().unwrap());
         });
     });
     group.bench_function("rustcrypto", |b| {
         b.iter(|| {
-            let mut generator = RsaKeyPairGeneratorRustCrypto::new();
-            generator.init(params()).unwrap();
+            let mut generator = RsaKeyPairGeneratorRustCrypto::new(rng());
+            generator.init(&params).unwrap();
             black_box(generator.generate_key_pair().unwrap());
         });
     });

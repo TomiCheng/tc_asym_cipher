@@ -75,13 +75,13 @@ struct State {
 /// };
 /// use tc_asym_encoding::Pkcs1Encoding;
 /// use tc_bigint::{FixedBigUint, Word};
-/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParamsOwned, RsaKeyPairGenerator};
+/// use tc_rsa::{FixedRsaCoreEngine, RsaKeyGenerationParams, RsaKeyPairGenerator};
 ///
 /// type U2048 = FixedBigUint<{ 2048 / Word::BITS as usize }>;
 ///
 /// // 1. Generate a 2048-bit key pair.
-/// let mut generator = RsaKeyPairGenerator::<U2048>::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGenerator::<U2048, U2048, _>::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt with the public key: the message, of at most 245 bytes, is

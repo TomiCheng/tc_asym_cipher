@@ -34,14 +34,14 @@ struct Key {
 ///     KeyPairGeneratorInit,
 /// };
 /// use tc_rsa::{
-///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned,
+///     RsaCoreEngineRustCrypto, RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParams,
 ///     RsaKeyPairGeneratorRustCrypto,
 /// };
 ///
 /// // 1. Generate a key pair through `rsa`: a 2048-bit modulus and the
 /// //    public exponent 65537, drawn from the system's random source.
-/// let mut generator = RsaKeyPairGeneratorRustCrypto::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyPairGeneratorRustCrypto::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // 2. Encrypt a block with the public key. Raw RSA is shown here; a real
@@ -198,15 +198,15 @@ mod tests {
 
     use super::RsaCoreEngineRustCrypto;
     use crate::{
-        PaddedRsaCoreEngine, RsaError, RsaKeyGenerationParamsOwned, RsaKeyOwned,
+        PaddedRsaCoreEngine, RsaError, RsaKeyGenerationParams, RsaKeyOwned,
         RsaKeyPairGeneratorRustCrypto, RsaKeyParams,
     };
 
     #[test]
     fn it_encrypts_as_the_padded_engine_of_this_crate_does() {
-        let mut generator = RsaKeyPairGeneratorRustCrypto::new();
+        let mut generator = RsaKeyPairGeneratorRustCrypto::new(StdRng::seed_from_u64(1));
         generator
-            .init(RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(1)).with_strength(1024))
+            .init(&RsaKeyGenerationParams::new().with_strength(1024))
             .unwrap();
         let (public, _) = generator.generate_key_pair().unwrap();
         let mut engine = RsaCoreEngineRustCrypto::new();

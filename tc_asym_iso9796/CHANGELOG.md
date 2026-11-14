@@ -2,6 +2,14 @@
 
 All notable changes to `tc_asym_iso9796` are documented in this file.
 
+## 0.2.0 - 2026-11-14
+
+### Compatibility
+
+- **Breaking:** depends on `tc_asym_cipher` 0.2 and `tc_rsa` 0.2, whose
+  `RsaEngine`, `RsaKey` and `RsaError` it takes and exposes. The encoding
+  itself is unchanged.
+
 ## 0.1.0 - 2026-10-13
 
 Initial release.

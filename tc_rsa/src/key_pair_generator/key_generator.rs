@@ -1,5 +1,6 @@
 //! The generator of [`RsaKey`] pairs, on the safest generator available.
 
+use rand_core::CryptoRng;
 use tc_asym_cipher::{KeyPairGenerator, KeyPairGeneratorInit};
 
 use crate::{RsaError, RsaKey, RsaKeyGenerationParams};
@@ -7,9 +8,9 @@ use crate::{RsaError, RsaKey, RsaKeyGenerationParams};
 /// The generator underneath: that of the RustCrypto `rsa` crate when the
 /// `rustcrypto` feature is on, and that of this crate otherwise.
 #[cfg(feature = "rustcrypto")]
-type Inner<'a> = crate::RsaKeyPairGeneratorRustCrypto<'a>;
+type Inner<R> = crate::RsaKeyPairGeneratorRustCrypto<R>;
 #[cfg(not(feature = "rustcrypto"))]
-type Inner<'a> = crate::RsaKeyPairGenerator<'a, tc_bigint::PaddedBigUint>;
+type Inner<R> = crate::RsaKeyPairGenerator<tc_bigint::PaddedBigUint, tc_bigint::PaddedBigUint, R>;
 
 /// Generates pairs of [`RsaKey`], the public one a
 /// [`Core`](RsaKey::Core) key and the private one a [`Crt`](RsaKey::Crt)
@@ -17,18 +18,17 @@ type Inner<'a> = crate::RsaKeyPairGenerator<'a, tc_bigint::PaddedBigUint>;
 /// RustCrypto `rsa` crate when the `rustcrypto` feature is on, and through
 /// [`RsaKeyPairGenerator`](crate::RsaKeyPairGenerator) over
 /// `PaddedBigUint` otherwise. The type and its API are the same either
-/// way; only the generator inside changes. It takes the parameters both
-/// take, of any kind that implements [`RsaKeyGenerationParams`], for as
-/// long as `'a`, which is inferred.
+/// way; only the generator inside changes. It draws from the random source
+/// `R` it is constructed with, owned, or borrowed as `&mut R`.
 ///
 /// ```
 /// use tc_asym_cipher::{AsymmetricKeyParams, KeyPairGenerator, KeyPairGeneratorInit};
-/// use tc_rsa::{RsaKey, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+/// use tc_rsa::{RsaKey, RsaKeyGenerationParams, RsaKeyGenerator};
 ///
 /// // A 2048-bit pair, with the public exponent 65537, drawn from the
 /// // system's random source.
-/// let mut generator = RsaKeyGenerator::new();
-/// generator.init(RsaKeyGenerationParamsOwned::new(rand::rng()))?;
+/// let mut generator = RsaKeyGenerator::new(rand::rng());
+/// generator.init(&RsaKeyGenerationParams::new())?;
 /// let (public, private) = generator.generate_key_pair()?;
 ///
 /// // The public key is raised by `e`; the private one through the CRT.
@@ -36,35 +36,26 @@ type Inner<'a> = crate::RsaKeyPairGenerator<'a, tc_bigint::PaddedBigUint>;
 /// assert!(matches!(private, RsaKey::Crt(_)));
 /// # Ok::<(), tc_rsa::RsaError>(())
 /// ```
-pub struct RsaKeyGenerator<'a> {
-    inner: Inner<'a>,
+pub struct RsaKeyGenerator<R> {
+    inner: Inner<R>,
 }
 
-impl RsaKeyGenerator<'_> {
-    /// A generator to be initialized before it generates. Constant time.
-    pub fn new() -> Self {
+impl<R> RsaKeyGenerator<R> {
+    /// A generator drawing from `rng`, to be initialized before it
+    /// generates. Constant time.
+    pub const fn new(rng: R) -> Self {
         Self {
-            inner: Inner::new(),
+            inner: Inner::new(rng),
         }
     }
 }
 
-/// Through [`new`](RsaKeyGenerator::new). Constant time.
-impl Default for RsaKeyGenerator<'_> {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// Keeps the parameters once the generator underneath checks them.
-/// Variable time: only for public values, as the parameters are.
-impl<'a, P> KeyPairGeneratorInit<P> for RsaKeyGenerator<'a>
-where
-    P: RsaKeyGenerationParams + 'a,
-{
+/// Keeps a copy of the parameters once the generator underneath checks
+/// them. Variable time: only for public values, as the parameters are.
+impl<R> KeyPairGeneratorInit<RsaKeyGenerationParams> for RsaKeyGenerator<R> {
     type Error = RsaError;
 
-    fn init(&mut self, params: P) -> Result<(), RsaError> {
+    fn init(&mut self, params: &RsaKeyGenerationParams) -> Result<(), RsaError> {
         self.inner.init(params)
     }
 }
@@ -72,7 +63,7 @@ where
 /// A pair from the generator underneath, as [`RsaKey`]. Variable time, as
 /// key generation everywhere is: how many candidates are drawn shows in
 /// the running time; the generator underneath tells the rest.
-impl KeyPairGenerator for RsaKeyGenerator<'_> {
+impl<R: CryptoRng> KeyPairGenerator for RsaKeyGenerator<R> {
     type PublicKey = RsaKey;
     type PrivateKey = RsaKey;
     type Error = RsaError;
@@ -93,13 +84,13 @@ mod tests {
     };
 
     use super::RsaKeyGenerator;
-    use crate::{PaddedRsaCoreEngine, RsaKey, RsaKeyGenerationParamsOwned, RsaKeyParams};
+    use crate::{PaddedRsaCoreEngine, RsaKey, RsaKeyGenerationParams, RsaKeyParams};
 
     #[test]
     fn a_generated_pair_is_a_public_core_key_and_a_private_crt_key_of_one_modulus() {
-        let mut generator = RsaKeyGenerator::new();
-        let params = RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(1)).with_strength(1024);
-        generator.init(params).unwrap();
+        let mut generator = RsaKeyGenerator::new(StdRng::seed_from_u64(1));
+        let params = RsaKeyGenerationParams::new().with_strength(1024);
+        generator.init(&params).unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
         assert!(matches!(public, RsaKey::Core(_)) && !public.is_private_key());
         assert!(matches!(private, RsaKey::Crt(_)) && private.is_private_key());
@@ -110,9 +101,9 @@ mod tests {
 
     #[test]
     fn a_generated_pair_encrypts_and_decrypts_a_block() {
-        let mut generator = RsaKeyGenerator::new();
-        let params = RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(2)).with_strength(1024);
-        generator.init(params).unwrap();
+        let mut generator = RsaKeyGenerator::new(StdRng::seed_from_u64(2));
+        let params = RsaKeyGenerationParams::new().with_strength(1024);
+        generator.init(&params).unwrap();
         let (public, private) = generator.generate_key_pair().unwrap();
         let message = [0x5a; 127];
         let mut engine = PaddedRsaCoreEngine::new();

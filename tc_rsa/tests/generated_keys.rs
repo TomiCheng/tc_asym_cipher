@@ -15,16 +15,18 @@ use tc_asym_cipher::{
 use tc_bigint::{ArrayEncoding, PaddedBigUint};
 use tc_rsa::{
     PaddedRsaCoreEngine, PaddedRsaCrtCoreEngine, RsaCoreEngineRustCrypto,
-    RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParamsOwned, RsaKeyOwned, RsaKeyPairGenerator,
+    RsaCrtCoreEngineRustCrypto, RsaKeyGenerationParams, RsaKeyOwned, RsaKeyPairGenerator,
     RsaKeyPairGeneratorRustCrypto, RsaKeyParams, RsaKeyRustCrypto, RsaPrivateCrtKeyOwned,
     RsaPrivateCrtKeyParams, RsaPrivateCrtKeyRustCrypto,
 };
 
 const BLOCK: [u8; 127] = [0x3c; 127];
 
-fn params(seed: u64) -> RsaKeyGenerationParamsOwned {
-    RsaKeyGenerationParamsOwned::new(StdRng::seed_from_u64(seed)).with_strength(1024)
+fn rng(seed: u64) -> StdRng {
+    StdRng::seed_from_u64(seed)
 }
+
+const PARAMS: RsaKeyGenerationParams = RsaKeyGenerationParams::new().with_strength(1024);
 
 fn run(
     engine: &mut impl AsymmetricBlockCipher<Error = tc_rsa::RsaError>,
@@ -45,8 +47,8 @@ fn padded(value: &BoxedUint) -> PaddedBigUint {
 
 #[test]
 fn a_key_of_this_crate_runs_through_rustcrypto() {
-    let mut generator = RsaKeyPairGenerator::<PaddedBigUint>::new();
-    generator.init(params(1)).unwrap();
+    let mut generator = RsaKeyPairGenerator::<PaddedBigUint, PaddedBigUint, _>::new(rng(1));
+    generator.init(&PARAMS).unwrap();
     let (public, private) = generator.generate_key_pair().unwrap();
 
     let mut encrypt = PaddedRsaCoreEngine::new();
@@ -72,8 +74,8 @@ fn a_key_of_this_crate_runs_through_rustcrypto() {
 
 #[test]
 fn a_key_of_rustcrypto_runs_through_the_engines_of_this_crate() {
-    let mut generator = RsaKeyPairGeneratorRustCrypto::new();
-    generator.init(params(2)).unwrap();
+    let mut generator = RsaKeyPairGeneratorRustCrypto::new(rng(2));
+    generator.init(&PARAMS).unwrap();
     let (public, private) = generator.generate_key_pair().unwrap();
 
     let mut encrypt = RsaCoreEngineRustCrypto::new();

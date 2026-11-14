@@ -2,6 +2,14 @@
 
 All notable changes to `tc_asym_encoding` are documented in this file.
 
+## 0.2.0 - 2026-11-14
+
+### Compatibility
+
+- **Breaking:** depends on `tc_asym_cipher` 0.2, whose `AsymmetricBlockCipher`
+  the encodings take and implement, so they run over the engines of
+  `tc_rsa` 0.2. The encodings themselves are unchanged.
+
 ## 0.1.0 - 2026-10-13
 
 Initial release.

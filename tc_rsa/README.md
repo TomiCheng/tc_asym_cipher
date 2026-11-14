@@ -27,7 +27,7 @@ Rust 1.85 or later. Benchmarks are in [BENCHES.md](BENCHES.md).
 - `RsaBlindingEngine`, `RsaBlindingFactorGenerator`, `RsaBlindingParams` (`alloc`) — Chaum's blinding for a blind signature.
 - `RsaKeyOwned`, `RsaKeyRef`, `RsaPrivateCrtKeyOwned`, `RsaPrivateCrtKeyRef` — keys held by value or borrowed.
 - `RsaKeyRustCrypto`, `RsaPrivateCrtKeyRustCrypto` (`rustcrypto`) — keys of the `rsa` crate.
-- `RsaKeyGenerationParamsOwned`, `RsaKeyGenerationParamsRef` (`alloc`) — the random source, public exponent, strength and certainty to generate to.
+- `RsaKeyGenerationParams` (`alloc`) — the public exponent, strength and certainty to generate to; the generators take their random source when they are constructed.
 - `RsaError` — what can go wrong in RSA.
 - `ALGO_NAME` — `"RSA"`, the name every engine writes through `Display`.
 
@@ -47,10 +47,10 @@ Rust 1.85 or later. Benchmarks are in [BENCHES.md](BENCHES.md).
 
 ```rust
 use tc_asym_cipher::{AsymmetricBlockCipher, AsymmetricBlockCipherInit, CipherDirection, KeyPairGenerator, KeyPairGeneratorInit};
-use tc_rsa::{RsaEngine, RsaKeyGenerationParamsOwned, RsaKeyGenerator};
+use tc_rsa::{RsaEngine, RsaKeyGenerationParams, RsaKeyGenerator};
 
-let mut generator = RsaKeyGenerator::new();
-generator.init(RsaKeyGenerationParamsOwned::new(rand::rng())).expect("valid parameters");
+let mut generator = RsaKeyGenerator::new(rand::rng());
+generator.init(&RsaKeyGenerationParams::new()).expect("valid parameters");
 let (public, private) = generator.generate_key_pair().expect("a 2048-bit key pair");
 let mut engine = RsaEngine::new();
 engine.init(CipherDirection::Encrypt, &public).expect("a valid key");
