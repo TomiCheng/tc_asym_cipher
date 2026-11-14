@@ -2,7 +2,7 @@
 
 All notable changes to `tc_asym_cipher` are documented in this file.
 
-## Unreleased
+## 0.2.0 - Unreleased
 
 ### Changed
 

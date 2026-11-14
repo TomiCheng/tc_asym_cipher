@@ -2,7 +2,7 @@
 
 All notable changes to `tc_rsa` are documented in this file.
 
-## Unreleased
+## 0.2.0 - Unreleased
 
 ### Changed
 
@@ -17,6 +17,10 @@ All notable changes to `tc_rsa` are documented in this file.
   which are removed. `RsaKeyPairGenerator<T, H, R>`, `RsaKeyGenerator<R>`
   and `RsaKeyPairGeneratorRustCrypto<R>` take the type of the random source
   in place of a lifetime, and no longer implement `Default`.
+
+### Compatibility
+
+- Depends on `tc_asym_cipher` 0.2.
 
 ## 0.1.0 - 2026-10-13
 
