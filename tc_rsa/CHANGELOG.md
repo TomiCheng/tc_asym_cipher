@@ -2,6 +2,16 @@
 
 All notable changes to `tc_rsa` are documented in this file.
 
+## 0.2.1 - Unreleased
+
+### Compatibility
+
+- With `rustcrypto`, requires `crypto-bigint` 0.7.11 or later, now a direct
+  dependency of the feature. That release deprecates `BoxedUint::bits` in
+  favour of `bit_width`, which the RustCrypto engines and generator now
+  call; `rsa` asks only for 0.7, so the floor has to come from here. Builds
+  without the feature are unchanged.
+
 ## 0.2.0 - 2026-11-14
 
 ### Changed

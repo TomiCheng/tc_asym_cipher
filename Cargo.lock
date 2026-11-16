@@ -763,6 +763,7 @@ name = "tc_rsa"
 version = "0.2.0"
 dependencies = [
  "criterion",
+ "crypto-bigint",
  "num-traits",
  "rand",
  "rand_core",

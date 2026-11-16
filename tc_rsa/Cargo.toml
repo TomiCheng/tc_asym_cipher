@@ -18,9 +18,12 @@ all-features = true
 [features]
 default = ["alloc"]
 alloc = ["tc_bigint/alloc", "tc_modular/alloc", "tc_prime/alloc"]
-rustcrypto = ["alloc", "dep:rsa", "dep:zeroize"]
+rustcrypto = ["alloc", "dep:rsa", "dep:crypto-bigint", "dep:zeroize"]
 
 [dependencies]
+# Not used directly: rsa brings it in, and this raises it to the release
+# with `BoxedUint::bit_width`, which the rustcrypto engines call.
+crypto-bigint = { version = "0.7.11", default-features = false, optional = true }
 num-traits = { version = "0.2.19", default-features = false }
 rand_core = { version = "0.10.1", default-features = false }
 rsa = { version = "=0.10.0-rc.19", default-features = false, features = ["hazmat"], optional = true }
