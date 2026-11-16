@@ -122,7 +122,7 @@ mod tests {
         let (public, private) = generator.generate_key_pair().unwrap();
         assert_eq!(public.modulus(), private.modulus());
         assert_eq!(public.exponent(), private.public_exponent());
-        assert_eq!(public.modulus().bits(), 1024);
+        assert_eq!(public.modulus().bit_width(), 1024);
     }
 
     #[test]

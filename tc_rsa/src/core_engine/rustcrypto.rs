@@ -110,7 +110,7 @@ where
         let key = RsaPublicKey::new(n.clone(), e.clone()).map_err(|_| RsaError::InvalidKey)?;
         self.key = Some(Key {
             modulus_less_one: n.wrapping_sub(BoxedUint::one_with_precision(n.bits_precision())),
-            bits: n.bits(),
+            bits: n.bit_width(),
             direction,
             key,
         });
@@ -168,7 +168,7 @@ pub(crate) fn read_be(
     let x = BoxedUint::from_be_slice(input, modulus_less_one.bits_precision())
         .map_err(|_| RsaError::InputTooLarge)?;
     let x = Zeroizing::new(x);
-    if x.bits() <= 1 {
+    if x.bit_width() <= 1 {
         return Err(RsaError::InputTooSmall);
     }
     if *x >= *modulus_less_one {
