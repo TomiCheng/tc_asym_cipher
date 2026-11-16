@@ -230,9 +230,9 @@ checksum = "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5"
 
 [[package]]
 name = "crypto-bigint"
-version = "0.7.5"
+version = "0.7.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a52aa3fcda4e6302a9f48734f234d35d4721b96f8fe07d073f07ce9df4f0271"
+checksum = "914c195c4d7fbc5ed7f88d14cbf85914d5c664967658d43404b263913a477e82"
 dependencies = [
  "cpubits",
  "ctutils",
@@ -263,9 +263,9 @@ dependencies = [
 
 [[package]]
 name = "ctutils"
-version = "0.4.3"
+version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "03bb0e1cc970d482d121d9a1744999169b69a07470b3d644a7894e53fcaf4574"
+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
 dependencies = [
  "cmov",
 ]
@@ -716,6 +716,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bcfe3e4732defe64408b706121575a0fdbd7011a3647566cd0a353daf64c165"
 
 [[package]]
+name = "tc_dh_key"
+version = "0.1.0"
+dependencies = [
+ "rand",
+ "rand_core",
+ "tc_asym_cipher",
+ "tc_bigint",
+ "tc_modular",
+ "tc_prime",
+ "tc_zeroize",
+]
+
+[[package]]
 name = "tc_digest"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -747,9 +760,10 @@ dependencies = [
 
 [[package]]
 name = "tc_rsa"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "criterion",
+ "crypto-bigint",
  "num-traits",
  "rand",
  "rand_core",

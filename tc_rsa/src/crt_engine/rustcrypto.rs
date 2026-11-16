@@ -149,7 +149,7 @@ where
         .map_err(|_| RsaError::InvalidKey)?;
         self.key = Some(CrtKey {
             modulus_less_one: n.wrapping_sub(BoxedUint::one_with_precision(n.bits_precision())),
-            bits: n.bits(),
+            bits: n.bit_width(),
             direction,
             key,
         });

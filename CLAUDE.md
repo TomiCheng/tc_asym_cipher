@@ -30,7 +30,8 @@ The crate list and workspace-wide checks live in the root
 [README.md](README.md); read it rather than restating it here. Every crate is
 `no_std`. `tc_asym_cipher` needs no allocator; `tc_rsa` turns its `alloc`
 feature on by default and keeps its fixed-width engines without it; the
-encodings always use `alloc` for their block buffers.
+encodings always use `alloc` for their block buffers, and `tc_dh_key` for its
+integers.
 
 The crates follow Bouncy Castle's asymmetric classes and keep their names
 where they fit. `tc_asym_cipher` holds the contracts alone:
@@ -77,12 +78,26 @@ the moduli, messages and blocks on which Bouncy Castle reads out of bounds,
 cuts short or loops, and is variable time, only for public values. Part 2,
 `Iso9796d2Signer`, is not implemented; its crate documentation says so.
 
+`tc_dh_key` holds the Diffie-Hellman layer that key agreement and ElGamal
+share, after Bouncy Castle's DH parameter classes: `DhParameters`, the keys
+`DhPublicKey` and `DhPrivateKey`, `DhKeyPairGenerator`, which implements the
+`tc_asym_cipher` generator traits, `DhGroupGenerator`, Bouncy Castle's
+`DHParametersGenerator` under a name that says what it makes, and the RFC
+groups in `standard_groups`. Parameters and keys are containers, checked by
+`validate` and by the generators' `init`; beyond Bouncy Castle it turns down a
+subgroup order below 3, which would make the public-key subgroup check accept
+every y, and checks at `init` that the range of a private value is not empty.
+Key generation is constant time in the private value; parameters, public keys
+and group generation are variable time. The agreement and ElGamal themselves
+live in other crates.
+
 Each crate but `tc_asym_cipher` has a `tests/documentation.rs` that requires
 its declarations to say "constant time" or "variable time", exactly one,
 matched without case and across wrapped lines. `tc_rsa`'s reads every file
 under `src` and holds every public function and every trait implementation
 with a method to it, in the implementation's doc or in each method's; the
-encodings' read the files they name and the declarations they list. A mixed
+encodings' and `tc_dh_key`'s read the files they name and the declarations
+they list. A mixed
 contract names one classification and describes the other part without the
 phrase, as "constant time in the input and the private key; the public
 exponent shows". Keep the timing contract of each item stated in its doc
