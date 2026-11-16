@@ -1,0 +1,24 @@
+[package]
+name = "tc_dh_key"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Diffie-Hellman domain parameters, keys, standard groups, and group and key pair generation, after Bouncy Castle."
+readme = "README.md"
+documentation = "https://docs.rs/tc_dh_key"
+keywords = ["diffie-hellman", "dh", "elgamal", "cryptography", "no-std"]
+categories = ["cryptography", "no-std"]
+include = ["src/**", "tests/**", "README.md", "CHANGELOG.md", "LICENSE-MIT", "LICENSE-APACHE"]
+
+[dependencies]
+rand_core = { version = "0.10.1", default-features = false }
+tc_asym_cipher = { version = "0.2.0", path = "../tc_asym_cipher" }
+tc_bigint = { version = "0.1.0", features = ["alloc", "rand_core"] }
+tc_modular = { version = "0.1.0", features = ["alloc"] }
+tc_prime = { version = "0.1.0", features = ["alloc"] }
+tc_zeroize = "0.1.0"
+
+[dev-dependencies]
+rand = "0.10.3"
