@@ -30,8 +30,8 @@ The crate list and workspace-wide checks live in the root
 [README.md](README.md); read it rather than restating it here. Every crate is
 `no_std`. `tc_asym_cipher` needs no allocator; `tc_rsa` turns its `alloc`
 feature on by default and keeps its fixed-width engines without it; the
-encodings always use `alloc` for their block buffers, and `tc_dh_key` for its
-integers.
+encodings always use `alloc` for their block buffers, and `tc_dh_key` and
+`tc_elgamal` for their integers.
 
 The crates follow Bouncy Castle's asymmetric classes and keep their names
 where they fit. `tc_asym_cipher` holds the contracts alone:
@@ -88,16 +88,30 @@ groups in `standard_groups`. Parameters and keys are containers, checked by
 subgroup order below 3, which would make the public-key subgroup check accept
 every y, and checks at `init` that the range of a private value is not empty.
 Key generation is constant time in the private value; parameters, public keys
-and group generation are variable time. The agreement and ElGamal themselves
-live in other crates.
+and group generation are variable time. The agreement lives in another
+repository and ElGamal in `tc_elgamal`.
+
+`tc_elgamal` holds ElGamal encryption, after Bouncy Castle's `ElGamalEngine`,
+`ElGamalParameters`, the two key classes and their generators.
+`ElGamalEngine` implements the `tc_asym_cipher` cipher traits for both keys
+with the block sizes of `tc_rsa`, decryption giving the whole length of p, so
+the encodings wrap it. The keys are their own types, not `tc_dh_key`'s, so
+that what reads or writes them can tell ElGamal from Diffie-Hellman; the
+parameters convert to `DhParameters` for their checks, and
+`ElGamalKeyPairGenerator` and `ElGamalGroupGenerator`, Bouncy Castle's
+`ElGamalParametersGenerator` under the name of `DhGroupGenerator`, wrap the
+`tc_dh_key` generators. Beyond Bouncy Castle, encryption turns down a public
+value outside `[2, p - 2]` and a message of 0. Encryption is constant time in
+the message and k, decryption in x and the message; the range checks of keys
+and ciphertexts are variable time.
 
 Each crate but `tc_asym_cipher` has a `tests/documentation.rs` that requires
 its declarations to say "constant time" or "variable time", exactly one,
 matched without case and across wrapped lines. `tc_rsa`'s reads every file
 under `src` and holds every public function and every trait implementation
 with a method to it, in the implementation's doc or in each method's; the
-encodings' and `tc_dh_key`'s read the files they name and the declarations
-they list. A mixed
+encodings', `tc_dh_key`'s and `tc_elgamal`'s read the files they name and the
+declarations they list. A mixed
 contract names one classification and describes the other part without the
 phrase, as "constant time in the input and the private key; the public
 exponent shows". Keep the timing contract of each item stated in its doc

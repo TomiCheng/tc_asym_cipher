@@ -111,7 +111,7 @@ jobs:
       - run: cargo doc --locked --no-deps
       - run: cargo doc --locked --no-deps --all-features
       - run: cargo doc --locked --no-deps -p tc_rsa --no-default-features
-      - run: cargo package --locked -p tc_asym_cipher -p tc_rsa -p tc_asym_encoding -p tc_asym_iso9796 -p tc_dh_key
+      - run: cargo package --locked -p tc_asym_cipher -p tc_rsa -p tc_asym_encoding -p tc_asym_iso9796 -p tc_dh_key -p tc_elgamal
         env:
           # Keep unpacked package manifests outside rust-cache's build tree.
           CARGO_TARGET_DIR: ${{ runner.temp }}/package
@@ -155,4 +155,5 @@ jobs:
             check 'num-traits rand_core tc_asym_cipher tc_asym_iso9796 tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize' -p tc_asym_iso9796 --target "$target"
             check 'cmov const-oid cpubits crypto-bigint crypto-common crypto-primes ctutils digest hybrid-array num-traits rand_core rsa signature tc_asym_cipher tc_asym_iso9796 tc_bigint tc_constant_time tc_modular tc_prime tc_rsa tc_zeroize typenum zeroize' -p tc_asym_iso9796 --target "$target" --all-features
             check 'num-traits rand_core tc_asym_cipher tc_bigint tc_constant_time tc_dh_key tc_modular tc_prime tc_zeroize' -p tc_dh_key --target "$target"
+            check 'num-traits rand_core tc_asym_cipher tc_bigint tc_constant_time tc_dh_key tc_elgamal tc_modular tc_prime tc_zeroize' -p tc_elgamal --target "$target"
           done
