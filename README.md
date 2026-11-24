@@ -3,8 +3,8 @@
 A Rust workspace for asymmetric block ciphers after Bouncy Castle: the
 contracts an asymmetric engine and a key pair generator implement, RSA with
 blinding and key generation, the encodings and signatures that wrap an
-engine, and the Diffie-Hellman domain parameters and keys that key agreement
-and ElGamal share. Each crate is published separately and keeps its own README and
+engine, the Diffie-Hellman domain parameters and keys that key agreement
+and ElGamal share, and ElGamal encryption over them. Each crate is published separately and keeps its own README and
 changelog.
 
 [![CI](https://github.com/TomiCheng/tc_asym_cipher/actions/workflows/ci.yml/badge.svg)](https://github.com/TomiCheng/tc_asym_cipher/actions/workflows/ci.yml)
@@ -20,12 +20,14 @@ changelog.
 | [`tc_asym_encoding`](tc_asym_encoding) | [![crates.io](https://img.shields.io/crates/v/tc_asym_encoding.svg)](https://crates.io/crates/tc_asym_encoding) [![docs.rs](https://docs.rs/tc_asym_encoding/badge.svg)](https://docs.rs/tc_asym_encoding) | PKCS#1 v1.5 and OAEP over any asymmetric block cipher, after Bouncy Castle's `crypto/encodings`. `no_std` with `alloc`, no `unsafe`. Constant time in the message and the block, apart from the engine and the digest. |
 | [`tc_asym_iso9796`](tc_asym_iso9796) | [![crates.io](https://img.shields.io/crates/v/tc_asym_iso9796.svg)](https://crates.io/crates/tc_asym_iso9796) [![docs.rs](https://docs.rs/tc_asym_iso9796/badge.svg)](https://docs.rs/tc_asym_iso9796) | ISO/IEC 9796-1 signatures with message recovery over the RSA of `tc_rsa`, after Bouncy Castle's `ISO9796d1Encoding`. `no_std` with `alloc`, no `unsafe`. Variable time, for public values. |
 | [`tc_dh_key`](tc_dh_key) | [![crates.io](https://img.shields.io/crates/v/tc_dh_key.svg)](https://crates.io/crates/tc_dh_key) [![docs.rs](https://docs.rs/tc_dh_key/badge.svg)](https://docs.rs/tc_dh_key) | Diffie-Hellman domain parameters and keys after Bouncy Castle, which key agreement and ElGamal share: the RFC 2409, 3526 and 7919 groups, safe-prime group generation, and key pair generation. `no_std` with `alloc`, no `unsafe`. Key generation is constant time in the private value; the rest is variable time, for public values. |
+| [`tc_elgamal`](tc_elgamal) | [![crates.io](https://img.shields.io/crates/v/tc_elgamal.svg)](https://crates.io/crates/tc_elgamal) [![docs.rs](https://docs.rs/tc_elgamal/badge.svg)](https://docs.rs/tc_elgamal) | ElGamal encryption after Bouncy Castle over the Diffie-Hellman groups of `tc_dh_key`: the engine, with the block sizes of `tc_rsa` so the encodings wrap it, its keys, and key pair and group generation. `no_std` with `alloc`, no `unsafe`. Constant time in the message, k and the private value; the range checks and group generation are variable time, for public values. |
 
 ## Requirements
 
 Rust 1.85 or later, edition 2024. Every crate builds without `std`.
 `tc_asym_cipher` needs no allocator; `tc_rsa` needs none without its default
-`alloc` feature, and the encodings and `tc_dh_key` always use `alloc`.
+`alloc` feature, and the encodings, `tc_dh_key` and `tc_elgamal` always use
+`alloc`.
 
 Rust 1.85 is the earliest compiler for edition 2024, and it is guaranteed for
 every build but one. Besides `tc_*` crates, the libraries depend only on
@@ -65,7 +67,8 @@ cargo publish -p <crate> --dry-run --locked
 ```
 
 Publish in dependency order: `tc_asym_cipher`, then `tc_rsa` and
-`tc_dh_key`, then `tc_asym_encoding` and `tc_asym_iso9796`. The archive must
+`tc_dh_key`, then `tc_asym_encoding` and `tc_asym_iso9796`, then
+`tc_elgamal`, whose tests use `tc_asym_encoding`. The archive must
 include both
 license texts, the crate README, the changelog, the source, the integration
 tests and, for `tc_rsa`, the benchmark with its results, and no `target/` or
